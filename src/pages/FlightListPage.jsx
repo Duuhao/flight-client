@@ -49,22 +49,22 @@ export default function FlightListPage() {
       <div className={styles.flightCard}>
         <h1 className="card-title">Flight List</h1>
         
-        <div className={styles.tabContainer}>
+        <div className="tab-container">
           <button
-            className={`${styles.tabButton} ${cabinClass === 'economy' ? styles.active : ''}`}
+            className={`tab-button ${cabinClass === 'economy' ? 'active' : ''}`}
             onClick={() => setCabinClass('economy')}
           >
             Economy
           </button>
           <button
-            className={`${styles.tabButton} ${cabinClass === 'business' ? styles.active : ''}`}
+            className={`tab-button ${cabinClass === 'business' ? 'active' : ''}`}
             onClick={() => setCabinClass('business')}
           >
             Business
           </button>
         </div>
 
-        <div className={styles.flightList}>
+        <div className="StandardList">
           {flights.slice(0, displayCount).map(flight => (
             <div key={flight.id} className={styles.flightItem}>
               <div className={styles.airlineInfo}>
@@ -89,7 +89,7 @@ export default function FlightListPage() {
               <div className={styles.flightPrice}>
                 ¥{cabinClass === 'economy' ? flight.economyPrice : flight.businessPrice}
               </div>
-              <button className={styles.bookButton}>Book</button>
+              <button className="listButton">Book</button>
             </div>
           ))}
         </div>
@@ -98,7 +98,7 @@ export default function FlightListPage() {
           <div className={styles.loadMoreContainer}>
             <button 
               onClick={() => setDisplayCount(prev => Math.min(prev + 10, flights.length))}
-              className={styles.loadMoreButton}
+              className="listButton"
             >
               Load More
             </button>
