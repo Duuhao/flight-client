@@ -3,10 +3,9 @@ import react from '@vitejs/plugin-react'
 import { createHtmlPlugin } from 'vite-plugin-html'
 
 export default defineConfig({
-  // 配置项目插件系统
   plugins: [
-    react(), // React项目必需插件
-    createHtmlPlugin({ // HTML模板处理
+    react(),
+    createHtmlPlugin({
       minify: true,
       inject: {
         data: {
@@ -15,9 +14,16 @@ export default defineConfig({
       }
     })
   ],
-  // 开发服务器配置
   server: {
     port: 3000,
-    historyApiFallback: true, // 支持前端路由
+    historyApiFallback: true,
+  },
+  build: {
+    assetsDir: 'assets/images',
+    rollupOptions: {
+      output: {
+        assetFileNames: 'assets/images/[name][extname]'
+      }
+    }
   }
 })
