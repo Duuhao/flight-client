@@ -1,0 +1,225 @@
+.page-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: calc(100vh - 80px);
+  padding: 2rem;
+  background: linear-gradient(to bottom, #87CEEB 0%, #E0F7FA 100%);
+}
+
+.content-container {
+  width: 100%;
+  max-width: 45rem;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+.card {
+  background: white;
+  border-radius: 0.75rem;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  padding: 2.5rem;
+  width: 100%;
+  max-width: 45rem;
+  margin: 0 auto;
+}
+
+.card-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 2rem;
+  text-align: center;
+  color: #1a365d;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.form-group {
+  position: relative;
+  margin-bottom: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #4a5568;
+  transition: all 0.2s;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.5rem;
+  background-color: #fff;
+  transition: all 0.2s;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.form-group input:focus {
+  outline: none;
+  border-color: #4299e1;
+  box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.2);
+}
+
+.form-group input::placeholder {
+  color: #a0aec0;
+}
+
+/* Floating label effect */
+.form-group.focused label,
+.form-group input:not(:placeholder-shown) + label {
+  transform: translateY(-1.5rem) scale(0.85);
+  color: #4299e1;
+}
+
+.primary-button {
+  background: #4299e1;
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.375rem;
+  border: none;
+  font-weight: 500;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: center;
+  display: inline-block;
+  min-width: 120px;
+}
+
+.primary-button:hover {
+  background: #3182ce;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.login-link {
+  margin-top: 1.5rem;
+  text-align: center;
+  color: #718096;
+  font-size: 0.875rem;
+}
+
+.link {
+  color: #4299e1;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.link:hover {
+  text-decoration: underline;
+}
+
+/* Error message */
+.error {
+  color: #e53e3e;
+  font-size: 0.875rem;
+  margin-bottom: 1rem;
+  padding: 0.5rem;
+  background: #fff5f5;
+  border-radius: 0.25rem;
+  text-align: center;
+}
+
+.formRow {
+  margin-bottom: 0.75rem;
+}
+
+/* Remember me checkbox */
+.rememberMe {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+}
+
+/* Flight List Styles */
+.flight-list {
+  display: grid;
+  gap: 1rem;
+}
+
+.flight-item {
+  display: grid;
+  grid-template-columns: 2fr 1fr 2fr 2fr 1fr 1fr;
+  align-items: center;
+  padding: 1.5rem;
+  border: 1px solid var(--gray-light);
+  border-radius: var(--radius-md);
+  min-height: 80px;
+}
+
+.airline-info {
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.airline-logo {
+  object-fit: contain;
+  width: 48px;
+  height: 48px;
+}
+
+.flight-number {
+  color: var(--gray);
+}
+
+.flight-route {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.flight-time {
+  color: var(--gray);
+}
+
+.flight-price {
+  font-weight: 600;
+  color: var(--primary-dark);
+}
+
+.book-button {
+  composes: primary-button;
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius-sm);
+}
+
+/* Tab styles */
+.tab-container {
+  display: flex;
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.tab-button {
+  flex: 1;
+  padding: 0.75rem;
+  text-align: center;
+  background: transparent;
+  border: none;
+  border-bottom: 3px solid transparent;
+  cursor: pointer;
+  font-weight: 500;
+  color: #4a5568;
+  transition: all 0.2s;
+}
+
+.tab-button.active {
+  color: #4299e1;
+  border-bottom-color: #4299e1;
+  background: #ebf8ff;
+}
