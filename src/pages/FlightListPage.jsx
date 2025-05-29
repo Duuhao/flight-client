@@ -69,8 +69,8 @@ export default function FlightListPage() {
             <div key={flight.id} className={styles.flightItem}>
               <div className={styles.airlineInfo}>
                 <img 
-                  src={`/src/assets/images/airlines/${
-                    flight.airline === 'Air China' ? 'air-china' : flight.airline.replace(/\s+/g, ' ')
+                  src={`src/assets/images/airlines/${
+                    flight.airline.replace(/\s+/g, ' ')
                   }.png`}
                   alt={flight.airline}
                   className={styles.airlineLogo}
