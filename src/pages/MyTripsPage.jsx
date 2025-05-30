@@ -11,7 +11,24 @@ export default function MyTripsPage() {
       from: 'Beijing',
       to: 'Shanghai',
       date: '2025-06-15',
-      type: 'Upcoming'
+      type: 'Upcoming',
+      isRoundTrip: true,
+      outbound: {
+        flight: 'CA123',
+        airline: 'Air China',
+        cabinClass: 'economy',
+        basePrice: 1200,
+        tax: 200,
+        fuelSurcharge: 150
+      },
+      returnFlight: {
+        flight: 'CA124',
+        airline: 'Air China',
+        cabinClass: 'business',
+        basePrice: 1800,
+        tax: 250,
+        fuelSurcharge: 180
+      }
     },
     {
       id: 2,
@@ -20,25 +37,16 @@ export default function MyTripsPage() {
       from: 'Shanghai',
       to: 'Tokyo',
       date: '2025-05-20',
-      type: 'Completed'
-    },
-    {
-      id: 3,
-      flight: 'HU789',
-      airline: 'Hainan Airlines',
-      from: 'Guangzhou',
-      to: 'Sydney',
-      date: '2025-07-10',
-      type: 'Upcoming'
-    },
-    {
-      id: 4,
-      flight: 'HU101',
-      airline: 'Hainan Airlines',
-      from: 'Chengdu',
-      to: 'Lhasa',
-      date: '2025-04-15',
-      type: 'Completed'
+      type: 'Completed',
+      isRoundTrip: false,
+      outbound: {
+        flight: 'MU456',
+        airline: 'China Eastern',
+        cabinClass: 'economy',
+        basePrice: 2500,
+        tax: 300,
+        fuelSurcharge: 200
+      }
     }
   ]);
 

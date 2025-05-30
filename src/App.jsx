@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
 import NavBar from './components/NavBar'
 import HomePage from './pages/HomePage'
 import LoginPage from './pages/LoginPage'
@@ -8,6 +8,8 @@ import UserCenterPage from './pages/UserCenterPage'
 import MyTripsPage from './pages/MyTripsPage'
 import MyBookingsPage from './pages/MyBookingsPage'
 import FlightListPage from './pages/FlightListPage'
+import BookingPage from './pages/BookingPage'
+import PaymentPage from './pages/PaymentPage'
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(() => {
@@ -32,6 +34,8 @@ function App() {
             <Route path="/flights" element={<FlightListPage />} />
             <Route path="/user" element={<UserCenterPage />} />
             <Route path="/my-trips" element={<MyTripsPage />} />
+            <Route path="/booking" element={<BookingPage />} />
+            <Route path="/payment" element={<PaymentPage />} />
           </Routes>
         </main>
       </div>

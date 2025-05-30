@@ -1,7 +1,12 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import AirlineInfo from '../components/AirlineInfo';
 
 export default function FlightListPage() {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const [outboundFlight, setOutboundFlight] = useState(null);
+  const { tripType, passengers } = location.state || {};
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [username, setUsername] = useState('');
   const [cabinClass, setCabinClass] = useState('economy');
@@ -37,11 +42,11 @@ export default function FlightListPage() {
         departure,
         arrival,
         date: `2025-06-${String(Math.floor(i/5) + 1).padStart(2, '0')}`,
-                time: {
-                  departure: `${6 + i % 12}:${i % 2 === 0 ? '00' : '30'}`,
-                  arrival: `${6 + (i + 2) % 12}:${i % 2 === 0 ? '30' : '00'}`,
-                  isNextDay: (6 + (i + 2) % 12) < (6 + i % 12)
-                },
+        time: {
+          departure: `${6 + i % 12}:${i % 2 === 0 ? '00' : '30'}`,
+          arrival: `${6 + (i + 2) % 12}:${i % 2 === 0 ? '30' : '00'}`,
+          isNextDay: (6 + (i + 2) % 12) < (6 + i % 12)
+        },
         economyPrice: 500 + Math.floor(Math.random() * 1000),
         businessPrice: 1500 + Math.floor(Math.random() * 2000)
       };
@@ -50,9 +55,12 @@ export default function FlightListPage() {
 
   return (
     <div className="page-container">
-      
       <div className="listCard">
-        <h1 className="card-title">Flight List</h1>
+        <h1 className="card-title">
+          {tripType === 'roundTrip' && outboundFlight 
+            ? 'Select Return Flight' 
+            : 'Flight List'}
+        </h1>
         
         <div className="tab-container">
           <button
@@ -120,7 +128,25 @@ export default function FlightListPage() {
                 ¥{cabinClass === 'economy' ? flight.economyPrice : flight.businessPrice}
               </div>
               <div style={{minWidth: '100px'}}>
-                <button className="listButton">Book</button>
+                <button 
+                  className="listButton"
+                  onClick={() => {
+                    if (tripType === 'roundTrip' && !outboundFlight) {
+                      setOutboundFlight(flight);
+                    } else {
+                      navigate('/booking', { 
+                        state: { 
+                          flight: tripType === 'roundTrip' ? outboundFlight : flight,
+                          returnFlight: tripType === 'roundTrip' ? flight : null,
+                          cabinClass,
+                          passengers
+                        }
+                      });
+                    }
+                  }}
+                >
+                  Book
+                </button>
               </div>
             </div>
           ))}
@@ -138,5 +164,5 @@ export default function FlightListPage() {
         )}
       </div>
     </div>
-  )
+  );
 }
