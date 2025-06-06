@@ -1,75 +1,108 @@
-import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import http from '../services/http';
+import styles from '../styles/shared.css';
 
 export default function RegisterPage() {
   const [formData, setFormData] = useState({
     username: '',
     email: '',
-    password: ''
-  })
+    password: '',
+    confirmPassword: ''
+  });
+  const [error, setError] = useState('');
+  const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
-    e.preventDefault()
-    if(!formData.username || !formData.email || !formData.password) {
-      alert('Please fill in all fields')
-      return
-    }
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
     
-    // 测试账号注册
-    if(formData.email === 'test@test.com') {
-      alert('Registration successful! Please login')
-      window.location.href = '/login'
-      return
+    if (formData.password !== formData.confirmPassword) {
+      setError('Passwords do not match');
+      return;
     }
 
-    // TODO: 调用注册API
-    console.log('Registration request:', formData)
-      alert('Registration successful! Please login')
-    window.location.href = '/login'
-  }
+    try {
+      const response = await http.post('/auth/register', {
+        username: formData.username,
+        email: formData.email,
+        password: formData.password
+      });
+      alert('Registration successful!');
+      navigate('/login');
+    } catch (err) {
+      setError(err.response?.data?.message || 'Registration failed');
+      console.error('Registration error:', err);
+    }
+  };
 
   return (
     <div className="page-container">
-      <div className="content-container">
-        <div className="card">
-          <h1 className="card-title">Create Account</h1>
-          <form onSubmit={handleSubmit} className="form">
-            <div className="form-group">
-              <label>Username</label>
-              <input 
-                type="text" 
-                value={formData.username}
-                onChange={(e) => setFormData({...formData, username: e.target.value})}
-                required
-              />
-            </div>
-            <div className="form-group">
-              <label>Email</label>
-              <input 
-                type="email" 
-                value={formData.email}
-                onChange={(e) => setFormData({...formData, email: e.target.value})}
-                required
-              />
-            </div>
-            <div className="form-group">
-              <label>Password</label>
-              <input 
-                type="password" 
-                value={formData.password}
-                onChange={(e) => setFormData({...formData, password: e.target.value})}
-                required
-              />
-            </div>
-            <button type="submit" className="primary-button">
-              Register
-            </button>
-          </form>
-          <div className="login-link">
-            Already have an account? <Link to="/login" className="link">Login</Link>
+      <div className="card">
+        <h1 className="card-title">Create Account</h1>
+        {error && <div className="error-message">{error}</div>}
+        
+        <form onSubmit={handleSubmit}>
+          <div className="form-group">
+            <label>Username</label>
+            <input
+              type="text"
+              name="username"
+              value={formData.username}
+              onChange={handleChange}
+              required
+            />
           </div>
+
+          <div className="form-group">
+            <label>Email</label>
+            <input
+              type="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              required
+            />
+          </div>
+
+          <div className="form-group">
+            <label>Password</label>
+            <input
+              type="password"
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
+              required
+            />
+          </div>
+
+          <div className="form-group">
+            <label>Confirm Password</label>
+            <input
+              type="password"
+              name="confirmPassword"
+              value={formData.confirmPassword}
+              onChange={handleChange}
+              required
+            />
+          </div>
+
+          <button type="submit" className="primary-button">
+            Register
+          </button>
+        </form>
+
+        <div className="link-text">
+          Already have an account? <a href="/login">Login here</a>
         </div>
       </div>
     </div>
-  )
+  );
 }

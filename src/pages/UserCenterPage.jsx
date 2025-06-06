@@ -1,12 +1,48 @@
+import { useState, useEffect } from 'react';
 import styles from '../styles/shared.css';
+import { getUserInfo } from '../services/http';
 
 export default function UserCenterPage() {
-  const user = {
-    name: 'John Doe',
-    email: 'john.doe@example.com',
-    phone: '+1 234 567 8900',
-    membership: 'Gold'
-  };
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchUserInfo = async () => {
+      try {
+        const userInfo = await getUserInfo();
+        setUser(userInfo);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUserInfo();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="page-container">
+        <div className="card">
+          <h1 className="card-title">User Center</h1>
+          <div>Loading user information...</div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="page-container">
+        <div className="card">
+          <h1 className="card-title">User Center</h1>
+          <div className="error">Error: {error}</div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="page-container">
@@ -15,8 +51,8 @@ export default function UserCenterPage() {
         
         <div className="info-display">
           <div className="info-item">
-            <span className="info-label">Full Name:</span>
-            <span className="info-value">{user.name}</span>
+            <span className="info-label">Username:</span>
+            <span className="info-value">{user.username}</span>
           </div>
 
           <div className="info-item">
@@ -25,13 +61,8 @@ export default function UserCenterPage() {
           </div>
 
           <div className="info-item">
-            <span className="info-label">Phone Number:</span>
-            <span className="info-value">{user.phone}</span>
-          </div>
-
-          <div className="info-item">
             <span className="info-label">Membership Level:</span>
-            <span className="info-value">{user.membership}</span>
+            <span className="info-value">{user.membership?.name || 'Standard'}</span>
           </div>
         </div>
       </div>

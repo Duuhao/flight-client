@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import AirlineInfo from '../components/AirlineInfo';
+import { searchFlights } from '../services/http';
 
 export default function FlightListPage() {
   const location = useLocation();
@@ -12,46 +13,65 @@ export default function FlightListPage() {
   const [cabinClass, setCabinClass] = useState('economy');
   const [sortBy, setSortBy] = useState('price');
   const [displayCount, setDisplayCount] = useState(10);
-  const [flights] = useState(() => {
-    const airlines = ['Air China', 'China Eastern', 'Hainan Airlines', 'Cathay Pacific', 'Singapore Airlines', 'Qantas', 'Emirates', 'ANA'];
-    const cities = ['Beijing', 'Shanghai', 'Guangzhou', 'Shenzhen', 'Hong Kong', 'Tokyo', 'Seoul', 'Singapore', 'Sydney', 'Dubai'];
-    
-    return Array.from({length: 25}, (_, i) => {
-      const airline = airlines[i % airlines.length];
-      const flightPrefix = {
-        'Air China': 'CA',
-        'China Eastern': 'MU',
-        'Hainan Airlines': 'HU',
-        'Cathay Pacific': 'CX',
-        'Singapore Airlines': 'SQ',
-        'Qantas': 'QF',
-        'Emirates': 'EK',
-        'ANA': 'NH'
-      }[airline];
-      
-      const departure = cities[i % cities.length];
-      let arrival = cities[(i + 1) % cities.length];
-      while (arrival === departure) {
-        arrival = cities[(i + 2) % cities.length];
+  const [flights, setFlights] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchFlights = async () => {
+      try {
+        setLoading(true);
+        const { outbound, inbound } = location.state;
+        
+        // 获取去程航班
+        // 格式化航班数据
+        const formatFlightData = (flights) => {
+          return flights.map(flight => ({
+            ...flight,
+            departure: flight.departureCity ? `${flight.departureCity} (${flight.departureAirport})` : flight.departureAirport,
+            arrival: flight.arrivalCity ? `${flight.arrivalCity} (${flight.arrivalAirport})` : flight.arrivalAirport,
+            time: {
+              departure: new Date(flight.departureTime).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
+              arrival: new Date(flight.arrivalTime).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
+              isNextDay: new Date(flight.arrivalTime).getDate() !== new Date(flight.departureTime).getDate()
+            }
+          }));
+        };
+
+        let outboundFlights = await searchFlights(
+          outbound.departureCode,
+          outbound.destinationCode,
+          outbound.date
+        );
+        outboundFlights = formatFlightData(outboundFlights);
+
+        if (location.state.tripType === 'roundTrip') {
+          // 如果是往返，获取返程航班
+          let inboundFlights = await searchFlights(
+            inbound.departureCode,
+            inbound.destinationCode,
+            inbound.date
+          );
+          inboundFlights = formatFlightData(inboundFlights);
+          setFlights({
+            outbound: outboundFlights,
+            inbound: inboundFlights
+          });
+        } else {
+          setFlights({
+            outbound: outboundFlights,
+            inbound: null
+          });
+        }
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
       }
-      
-      return {
-        id: i + 1,
-        airline,
-        flightNumber: `${flightPrefix}${1000 + i}`,
-        departure,
-        arrival,
-        date: `2025-06-${String(Math.floor(i/5) + 1).padStart(2, '0')}`,
-        time: {
-          departure: `${6 + i % 12}:${i % 2 === 0 ? '00' : '30'}`,
-          arrival: `${6 + (i + 2) % 12}:${i % 2 === 0 ? '30' : '00'}`,
-          isNextDay: (6 + (i + 2) % 12) < (6 + i % 12)
-        },
-        economyPrice: 500 + Math.floor(Math.random() * 1000),
-        businessPrice: 1500 + Math.floor(Math.random() * 2000)
-      };
-    });
-  });
+    };
+
+    fetchFlights();
+  }, [location.state]);
 
   return (
     <div className="page-container">
@@ -61,6 +81,16 @@ export default function FlightListPage() {
             ? 'Select Return Flight' 
             : 'Flight List'}
         </h1>
+        
+        {location.state?.outbound?.date && (
+          <div className="search-date-info">
+            <h3>
+              {tripType === 'roundTrip' 
+                ? `Departure: ${location.state.outbound.date} | Return: ${location.state.inbound.date}`
+                : `Date: ${location.state.outbound.date}`}
+            </h3>
+          </div>
+        )}
         
         <div className="tab-container">
           <button
@@ -95,39 +125,49 @@ export default function FlightListPage() {
         </div>
 
         <div className="StandardList">
-          {flights
-            .slice(0, displayCount)
-            .sort((a, b) => {
+          {loading ? (
+            <div>Loading flights...</div>
+          ) : error ? (
+            <div className="error">Error loading flights: {error}</div>
+          ) : (
+            (outboundFlight && tripType === 'roundTrip' 
+              ? flights.inbound 
+              : flights.outbound
+            )
+            ?.slice(0, displayCount)
+            ?.sort((a, b) => {
               if (sortBy === 'price') {
                 return (cabinClass === 'economy' 
                   ? a.economyPrice - b.economyPrice 
                   : a.businessPrice - b.businessPrice);
               } else {
-                return a.time.departure.localeCompare(b.time.departure);
+                return a.departureTime.localeCompare(b.departureTime);
               }
             })
-            .map(flight => (
-            <div key={flight.id} className="flightItem" style={{display: 'flex', alignItems: 'center', width: '100%'}}>
-              <div style={{minWidth: '180px'}}>
+            )?.map(flight => (
+            <div key={flight.id} className="flightItem" style={{display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%'}}>
+              <div style={{width: '180px'}}>
                 <AirlineInfo flightNumber={flight.flightNumber} />
               </div>
-              <div style={{minWidth: '80px'}}>
+              <div style={{width: '80px', textAlign: 'center', marginLeft: '-10px'}}>
                 {flight.flightNumber}
               </div>
-              <div style={{minWidth: '200px', flex: 1, display: 'flex', justifyContent: 'center', gap: '8px'}}>
+              <div style={{width: '280px', display: 'flex', justifyContent: 'center', gap: '8px', whiteSpace: 'nowrap'}}>
                 <span>{flight.departure}</span>
                 <span>→</span>
                 <span>{flight.arrival}</span>
               </div>
-              <div style={{minWidth: '150px'}}>
-                {flight.time.departure} → 
-                {flight.time.arrival}
-                {flight.time.isNextDay && <span style={{color: 'red'}}>+1</span>}
+              <div style={{width: '180px', textAlign: 'center'}}>
+                <div>
+                  {flight.time.departure} → 
+                  {flight.time.arrival}
+                  {flight.time.isNextDay && <span style={{color: 'red'}}>+1</span>}
+                </div>
               </div>
-              <div style={{minWidth: '100px'}}>
+              <div style={{width: '120px', textAlign: 'center'}}>
                 ¥{cabinClass === 'economy' ? flight.economyPrice : flight.businessPrice}
               </div>
-              <div style={{minWidth: '100px'}}>
+              <div style={{width: '100px'}}>
                 <button 
                   className="listButton"
                   onClick={() => {
@@ -136,8 +176,16 @@ export default function FlightListPage() {
                     } else {
                       navigate('/booking', { 
                         state: { 
-                          flight: tripType === 'roundTrip' ? outboundFlight : flight,
-                          returnFlight: tripType === 'roundTrip' ? flight : null,
+                          flight: {
+                            ...(tripType === 'roundTrip' ? outboundFlight : flight),
+                            date: tripType === 'roundTrip' 
+                              ? location.state.outbound.date 
+                              : location.state.outbound.date
+                          },
+                          returnFlight: tripType === 'roundTrip' ? {
+                            ...flight,
+                            date: location.state.inbound.date
+                          } : null,
                           cabinClass,
                           passengers
                         }

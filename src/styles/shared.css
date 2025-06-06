@@ -27,9 +27,20 @@
 .card-title {
   font-size: 1.5rem;
   font-weight: 600;
-  margin-bottom: 2rem;
+  margin-bottom: 1rem;
   text-align: center;
   color: #1a365d;
+}
+
+.search-date-info {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  color: #4a5568;
+}
+
+.search-date-info h3 {
+  font-size: 1.1rem;
+  font-weight: 500;
 }
 
 .form {
@@ -331,6 +342,30 @@
 .flightPrice {
   font-weight: 600;
   color: #2b6cb0;
+}
+
+/* Dropdown styles */
+.dropdown-list {
+  position: absolute;
+  z-index: 50;
+  width: 100%;
+  margin-top: 0.25rem;
+  background-color: #f9fafb;
+  border: 2px solid #dbeafe;
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  max-height: 15rem;
+  overflow: auto;
+}
+
+.dropdown-item {
+  padding: 0.75rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.dropdown-item:hover {
+  background-color: #dbeafe;
 }
 
 .loadMoreContainer {

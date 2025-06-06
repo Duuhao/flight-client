@@ -52,7 +52,16 @@ export default function BookingPage() {
             </div>
             <div className="detail-row">
               <span>Date:</span>
-              <span>{flight.date}</span>
+              <span>{
+                flight.date && !isNaN(new Date(flight.date)) 
+                  ? new Date(flight.date).toLocaleDateString('en-US', { 
+                      year: 'numeric', 
+                      month: 'long', 
+                      day: 'numeric',
+                      weekday: 'short'
+                    })
+                  : flight.date || 'N/A'
+              }</span>
             </div>
             <div className="detail-row">
               <span>Time:</span>
@@ -73,7 +82,16 @@ export default function BookingPage() {
               </div>
               <div className="detail-row">
                 <span>Date:</span>
-                <span>{returnFlight.date}</span>
+                <span>{
+                  returnFlight.date && !isNaN(new Date(returnFlight.date))
+                    ? new Date(returnFlight.date).toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'long', 
+                        day: 'numeric',
+                        weekday: 'short'
+                      })
+                    : returnFlight.date || 'N/A'
+                }</span>
               </div>
               <div className="detail-row">
                 <span>Time:</span>
