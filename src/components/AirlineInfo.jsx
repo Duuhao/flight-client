@@ -1,40 +1,23 @@
 import React from 'react';
 import '../styles/shared.css';
+import airlineNameMap from '../config/airlines.json';
 
-const airlineLogos = {
-  'CA': {
-    name: 'Air China',
-    logo: '/src/assets/images/airlines/Air China.png'
-  },
-  'MU': {
-    name: 'China Eastern', 
-    logo: '/src/assets/images/airlines/China Eastern.png'
-  },
-  'HU': {
-    name: 'Hainan Airlines',
-    logo: '/src/assets/images/airlines/Hainan Airlines.png'
-  },
-  'CX': {
-    name: 'Cathay Pacific',
-    logo: '/src/assets/images/airlines/Cathay Pacific.png'
-  },
-  'SQ': {
-    name: 'Singapore Airlines',
-    logo: '/src/assets/images/airlines/Singapore Airlines.png'
-  },
-  'QF': {
-    name: 'Qantas',
-    logo: '/src/assets/images/airlines/Qantas.png'
-  },
-  'EK': {
-    name: 'Emirates',
-    logo: '/src/assets/images/airlines/Emirates.png'
-  },
-  'NH': {
-    name: 'ANA',
-    logo: '/src/assets/images/airlines/ANA.png'
-  }
-};
+// 使用Vite的import.meta.glob批量导入航空公司logo
+const airlineImages = import.meta.glob('../assets/images/airlines/*.png', { eager: true });
+
+const airlineLogos = Object.fromEntries(
+  Object.entries(airlineNameMap).map(([code, name]) => {
+    const fileName = `${name}.png`;
+    const logoPath = `../assets/images/airlines/${fileName}`;
+    return [
+      code,
+      {
+        name,
+        logo: airlineImages[logoPath]?.default
+      }
+    ];
+  })
+);
 
 export default function AirlineInfo({ flightNumber }) {
   const airlineCode = flightNumber.substring(0, 2);
