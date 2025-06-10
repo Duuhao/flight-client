@@ -62,7 +62,7 @@ export default function UserCenterPage() {
 
           <div className="info-item">
             <span className="info-label">Membership Level:</span>
-            <span className="info-value">{user.membership?.name || 'Standard'}</span>
+            <span className="info-value">{user.membershipName || 'Standard'}</span>
           </div>
         </div>
       </div>
